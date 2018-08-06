@@ -1,9 +1,7 @@
-var express = require("express");
-var router = express.Router();
 var jwt = require("jsonwebtoken");
 var helper = require('./../Helpers');
 process.env.JwtSecretKey = helper.Constants.JwtSecretKey;
-//validation middleware
+
 module.exports.authenticate= function (req, res, next){
     var token = req.body.token || req.headers['token'];
     if (token) {

@@ -13,7 +13,7 @@ module.exports.Controller = {
             email: req.body.email,
             password: req.body.password
         }
-        database.dbEngine.Authenticate(authOptions, function (error, results, fields) {
+        database.dbEngine.Authenticate(authOptions,  (error, results, fields) => {
             if (error) {
                 res.json({
                     status: false,
@@ -22,7 +22,7 @@ module.exports.Controller = {
 
             } else {
                 if (results.rows.length > 0) {
-                    bcrypt.compare(authOptions.password, results.rows[0].password, function (err, ress) {
+                    bcrypt.compare(authOptions.password, results.rows[0].password,  (err, ress) => {
                         if (!ress) {
                             res.json({
                                 status: false,
@@ -52,21 +52,20 @@ module.exports.Controller = {
         });
     },
     RegisterUser: function (req, res) {
-
         if (req.body.Name && req.body.Address && req.body.email && req.body.password) {
             var hostname = req.headers.host; // hostname = 'localhost:8080'
-            var pathname = url.parse(req.url).pathname; // pathname = '/MyApp'
+
             var users = {
                 "name": req.body.Name,
                 "address": req.body.Address,
                 "contact": req.body.Contact,
                 "email": req.body.email,
                 "password": req.body.password,
-                "url": 'http://' + hostname + '/activate',
+                "url": (req.connection && req.connection.encrypted ? 'https://' : 'http://') + hostname + '/activate',
             }
 
-            database.dbEngine.RegisterUser(users, function (status, message, data) {
-                helper.CreateResponse(status, message, data, function (response) {
+            database.dbEngine.RegisterUser(users, (status, message, data) => {
+                helper.CreateResponse(status, message, data,  (response) => {
                     res.send(response);
                 });
             });
@@ -74,7 +73,7 @@ module.exports.Controller = {
         else {
             status = 'false';
             message = helper.MSG_LIST.Send_All_Required_Data
-            helper.CreateResponse(status, message, null, function (response) {
+            helper.CreateResponse(status, message, null, (response) => {
                 delete response.result
                 res.send(response)
             })
@@ -82,15 +81,15 @@ module.exports.Controller = {
     },
     MyProfile: function (req, res) {
         var email = req.decoded.email;
-        database.dbEngine.MyProfile(email, function (status, message, data) {
-            helper.CreateResponse(status, message, data, function (response) {
+        database.dbEngine.MyProfile(email, (status, message, data) => {
+            helper.CreateResponse(status, message, data, (response) => {
                 res.send(response);
             });
         });
     },
     Activate: function (req, res) {
-        database.dbEngine.Activate(id, function (status, message, data) {
-            helper.CreateResponse(status, message, data, function (response) {
+        database.dbEngine.Activate(id, (status, message, data) => {
+            helper.CreateResponse(status, message, data, (response) => {
                 res.send("ok");
             });
         });
